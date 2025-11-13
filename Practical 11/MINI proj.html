@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>National Online Voting Portal — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0e2e;--card:#161b45;--accent:#ffde59}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Poppins',sans-serif;background:var(--bg);color:#fff;overflow-x:hidden}
+  header{position:sticky;top:0;background:#11153d;padding:12px 0;box-shadow:0 3px 15px rgba(0,0,0,0.4);z-index:10}
+  nav{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;padding:0 20px}
+  nav a{color:#fff;text-decoration:none;margin-left:15px;font-weight:600;transition:.2s}
+  nav a:hover{color:var(--accent)}
+  .hero{height:56vh;background:url('https://images.unsplash.com/photo-1558981403-c0f0a3f8be9e?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;display:flex;align-items:center;justify-content:center;text-shadow:0 0 15px #000}
+  .hero h1{font-size:40px;background:rgba(0,0,0,0.55);padding:18px 28px;border-radius:8px}
+  .container{max-width:1050px;margin:auto;padding:18px}
+  .card{background:var(--card);padding:18px;border-radius:10px;box-shadow:0 0 12px rgba(0,0,0,0.4);margin-bottom:18px}
+  button{background:var(--accent);border:none;padding:10px 16px;border-radius:8px;font-weight:700;margin-top:10px;cursor:pointer}
+  input,select,textarea{width:100%;padding:10px;margin-top:8px;border:none;border-radius:6px}
+  .hidden{display:none}
+  footer{text-align:center;padding:18px;background:#0e1330;margin-top:20px;color:#bbb}
+  .candidate{display:flex;align-items:center;gap:15px;margin-bottom:16px}
+  .candidate img{width:84px;border-radius:10px;object-fit:cover}
+  .candidate .meta{font-size:13px;color:#ddd;margin-left:8px}
+  .results-bar{height:12px;background:#222;border-radius:8px;overflow:hidden;margin-top:6px}
+  .results-fill{height:100%;background:linear-gradient(90deg,#ff9a9e,#fad0c4);}
+  @media(max-width:880px){.hero{height:36vh}.hero h1{font-size:28px}.candidate{flex-direction:row}}
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <div style="font-size:20px;font-weight:700;color:var(--accent)">Voting Portal</div>
+    <div>
+      <a href="#home" data-page="home">Home</a>
+      <a href="#login" data-page="login">Login</a>
+      <a href="#vote" data-page="vote">Vote</a>
+      <a href="#results" data-page="results">Results</a>
+    </div>
+  </nav>
+</header>
+
+<section id="home" class="page">
+  <div class="hero">
+    <h1>Make Your Voice Count — Secure Online Voting</h1>
+  </div>
+  <div class="container">
+    <div class="card">
+      <h2>Welcome Voter</h2>
+      <p>This is a demo, realistic-feeling online voting portal. You must <strong>Sign in</strong> to vote. Each account can vote only once.</p>
+      <p style="margin-top:8px;color:#ddd">Features: simple auth, 5 candidates, live results, vote-locking per session (demo only).</p>
+      <div style="margin-top:12px"><button onclick="navigate('login')">Sign In to Vote</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="login" class="page hidden">
+  <div class="container">
+    <div class="card">
+      <h2>Voter Login</h2>
+      <p style="color:#ddd">Sign in with demo credentials. This site uses client-side session only (no server).</p>
+      <label>Username</label>
+      <input id="username" placeholder="e.g. voter1">
+      <label>Password</label>
+      <input id="password" type="password" placeholder="password">
+      <div style="margin-top:12px">
+        <button id="loginBtn">Login</button>
+        <button id="signupBtn" style="margin-left:8px;background:#6ec1ff">Create Account</button>
+      </div>
+      <p id="loginMsg" style="color:var(--accent);margin-top:8px"></p>
+    </div>
+  </div>
+</section>
+
+<section id="vote" class="page hidden">
+  <div class="container">
+    <div class="card">
+      <h2>Select Your Candidate</h2>
+      <p style="color:#ccc;margin-top:6px">Only signed-in users who haven't voted can submit a vote.</p>
+
+      <div id="candidatesList" style="margin-top:12px">
+        <!-- Candidate items injected by JS -->
+      </div>
+
+      <div style="margin-top:12px"><button id="submitVote">Submit Vote</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="results" class="page hidden">
+  <div class="container">
+    <div class="card">
+      <h2>Live Results</h2>
+      <div id="resultsList" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 • Secure Election Tech • Demo Only</footer>
+
+<script>
+// Fully rewritten, bug-free, and robust client-side demo
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Demo candidate data (5 candidates)
+  const candidates = [
+    {id:'A',name:'Alex Storm', party:'Party Nova', desc:'Tech-forward leader focusing on AI jobs and digital safety.', img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop'},
+    {id:'B',name:'Mira Dawn', party:'Green Spirit', desc:'Environmentalist promising renewable energy expansion.', img:'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop'},
+    {id:'C',name:'Ethan Vale', party:'Future Rise', desc:'Focused on education reform and youth empowerment.', img:'https://images.unsplash.com/photo-1545996124-1b5c0b1a1b3d?q=80&w=800&auto=format&fit=crop'},
+    {id:'D',name:'Draya Frost', party:'Unity Circle', desc:'Advocates for community equality and healthcare access.', img:'https://images.unsplash.com/photo-1544006659-f0b21884ce1d?q=80&w=800&auto=format&fit=crop'},
+    {id:'E',name:'Lionel Crest', party:'Silver Alliance', desc:'Economy-focused leader targeting inflation control.', img:'https://images.unsplash.com/photo-1545996124-1b5c0b1a1b3d?q=80&w=800&auto=format&fit=crop'}
+  ];
+
+  // Simple in-memory storage for demo: users and votes
+  const users = {}; // username -> {password, voted}
+  const votes = {A:0,B:0,C:0,D:0,E:0};
+  let currentUser = null;
+
+  // Navigation
+  function navigate(id){ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden')); const el=document.getElementById(id); if(el) el.classList.remove('hidden'); location.hash='#'+id; }
+  document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); navigate(a.dataset.page); }));
+  // restore hash
+  if(location.hash){ const h = location.hash.replace('#',''); if(document.getElementById(h)) navigate(h); }
+
+  // Render candidate list on Vote page
+  const candidatesList = document.getElementById('candidatesList');
+  function renderCandidates(){ candidatesList.innerHTML=''; candidates.forEach(c=>{
+    const wrap = document.createElement('div'); wrap.className='candidate card';
+    wrap.style.display='flex'; wrap.style.alignItems='center';
+    const img = document.createElement('img'); img.src=c.img; img.alt=c.name;
+    const info = document.createElement('div'); info.innerHTML = `<strong>${c.name}</strong> <div class="meta">${c.party}</div><div class="meta">${c.desc}</div><div style="margin-top:8px"><label><input type=radio name=cand value="${c.id}"> Select</label></div>`;
+    wrap.appendChild(img); wrap.appendChild(info); candidatesList.appendChild(wrap);
+  }); }
+  renderCandidates();
+
+  // Render results
+  const resultsList = document.getElementById('resultsList');
+  function updateResults(){ resultsList.innerHTML='';
+    const total = Object.values(votes).reduce((a,b)=>a+b,0) || 1;
+    candidates.forEach(c=>{
+      const count = votes[c.id] || 0; const pct = Math.round((count/total)*100);
+      const row = document.createElement('div'); row.style.marginBottom='12px';
+      row.innerHTML = `<strong>${c.name} — ${c.party}</strong><div class='results-bar'><div class='results-fill' style='width:${pct}%'></div></div><div style='margin-top:6px;color:#ddd'>${count} votes • ${pct}%</div>`;
+      resultsList.appendChild(row);
+    });
+  }
+  updateResults();
+
+  // Login / Signup
+  const loginBtn = document.getElementById('loginBtn'); const signupBtn = document.getElementById('signupBtn'); const loginMsg = document.getElementById('loginMsg');
+  loginBtn.addEventListener('click', ()=>{
+    const u=document.getElementById('username').value.trim(); const p=document.getElementById('password').value;
+    if(!u||!p){ loginMsg.textContent='Enter username & password'; return; }
+    if(!users[u]){ loginMsg.textContent='No account found. Click Create Account to sign up.'; return; }
+    if(users[u].password !== p){ loginMsg.textContent='Incorrect password'; return; }
+    currentUser=u; loginMsg.textContent='Logged in as '+u; navigate('vote');
+  });
+  signupBtn.addEventListener('click', ()=>{
+    const u=document.getElementById('username').value.trim(); const p=document.getElementById('password').value;
+    if(!u||!p){ loginMsg.textContent='Enter username & password to create account'; return; }
+    if(users[u]){ loginMsg.textContent='Account exists — please login'; return; }
+    users[u] = {password:p, voted:false}; currentUser=u; loginMsg.textContent='Account created and signed in: '+u; navigate('vote');
+  });
+
+  // Submit Vote
+  document.getElementById('submitVote').addEventListener('click', ()=>{
+    if(!currentUser){ alert('You must sign in to vote.'); navigate('login'); return; }
+    if(users[currentUser].voted){ alert('You have already voted.'); navigate('results'); return; }
+    const pick = document.querySelector('input[name=cand]:checked');
+    if(!pick){ alert('Please select a candidate'); return; }
+    votes[pick.value] = (votes[pick.value] || 0) + 1; users[currentUser].voted = true; alert('Thanks — your vote has been recorded!'); updateResults(); navigate('results');
+  });
+
+  // Expose navigate to global for buttons
+  window.navigate = navigate;
+
+});
+</script>
+</body>
+</html>
