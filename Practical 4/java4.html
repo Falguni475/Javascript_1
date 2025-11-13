@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Palindrome Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      color: #333;
+      padding: 40px;
+    }
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      margin: 5px;
+      width: 180px;
+      font-size: 15px;
+    }
+    button {
+      background: #ff6f61;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background: #e85b50; }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: darkblue;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🔄 Palindrome Checker</h2>
+  <input type="number" id="num" placeholder="Enter a number">
+  <br>
+  <button onclick="checkPalindrome()">Check</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    // a) Define and call function
+    function reverseNumber(n) {
+      return Number(String(n).split("").reverse().join(""));
+    }
+
+    // b) Function expression
+    const isPalindrome = function(n) {
+      return n === reverseNumber(n);
+    };
+
+    // c) Arrow function + closure demo
+    const showResult = () => {
+      let input = document.getElementById("num").value;
+      let num = Number(input);
+      
+      // Closure: inner function using "num" from parent scope
+      function message() {
+        return isPalindrome(num) ? "Yes! Palindrome ✅" : "Not a Palindrome ❌";
+      }
+
+      document.getElementById("output").innerText = 
+        `Reversed: ${reverseNumber(num)} → ${message()}`;
+    };
+
+    // Call
+    function checkPalindrome() {
+      showResult();
+    }
+  </script>
+
+</body>
+</html>
