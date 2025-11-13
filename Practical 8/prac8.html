@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gym Admission Form</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff8bb3, #ffa548);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 18px;
+    width: 380px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    animation: pop 0.4s ease;
+    border: 3px solid transparent;
+    transition: 0.3s;
+    z-index: 2;
+  }
+  .container:hover {
+    border: 3px solid #ff4d89;
+  }
+  @keyframes pop {
+    from {transform: scale(0.8); opacity:0;}
+    to {transform: scale(1); opacity:1;}
+  }
+  h2 {
+    text-align: center;
+    color: #ff4d89;
+  }
+  input, select {
+    width: 95%;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ff90b4;
+    transition: 0.2s;
+  }
+  input:focus, select:focus {
+    border-color: #ff4d89;
+    outline: none;
+    transform: scale(1.02);
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    background: #ff4d89;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #ff2e72;
+  }
+  .error {
+    color: red;
+    font-size: 0.8rem;
+  }
+  .shake {
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0% {transform: translateX(0);} 
+    25% {transform: translateX(-3px);} 
+    50% {transform: translateX(3px);} 
+    75% {transform: translateX(-3px);} 
+    100% {transform: translateX(0);} 
+  }
+  .success {
+    color: #35c46f;
+    font-size: 0.9rem;
+    text-align:center;
+    margin-top: 10px;
+  }
+  .quotes {
+    position: absolute;
+    top: 20px;
+    width: 90%;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    z-index: 1;
+    pointer-events: none;
+    animation: floatQuotes 8s infinite ease-in-out;
+  }
+  @keyframes floatQuotes {
+    0% {opacity:0; transform: translateY(-20px);} 
+    25% {opacity:1; transform: translateY(0);} 
+    75% {opacity:1; transform: translateY(0);} 
+    100% {opacity:0; transform: translateY(-20px);} 
+  }
+  /* small responsive tweak */
+  @media (max-width:420px){
+    .container{ width: 92%; }
+  }
+  .saved-data{
+    margin-top:12px;
+    background:#f8fff8;
+    padding:8px;
+    border-radius:8px;
+    font-size:0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="quotes">"Push yourself, because no one else will!" — "Sweat. Smile. Repeat." — "No pain, no gain!"</div>
+<div class="container">
+  <h2>🏋️ Gym Admission 🏋️</h2>
+  <form id="gymForm" novalidate>
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" placeholder="Enter full name" />
+    <div class="error" id="nameErr"></div>
+
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" placeholder="Enter email" />
+    <div class="error" id="emailErr"></div>
+
+    <label for="age">Age:</label><br>
+    <input type="number" id="age" placeholder="Enter age" />
+    <div class="error" id="ageErr"></div>
+
+    <label for="gender">Gender:</label><br>
+    <select id="gender">
+      <option value="">Select</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+
+    <label for="membership">Membership Type:</label><br>
+    <select id="membership">
+      <option value="Monthly">Monthly</option>
+      <option value="Quarterly">Quarterly</option>
+      <option value="Yearly">Yearly</option>
+    </select>
+
+    <label for="goals">Gym Goals:</label><br>
+    <input type="text" id="goals" placeholder="e.g. Weight loss, Strength" />
+
+    <button type="submit">Submit</button>
+  </form>
+  <p class="success" id="msg"></p>
+  <div id="saved" class="saved-data" style="display:none;"></div>
+</div>
+
+<script>
+// Elements
+const form = document.getElementById('gymForm');
+const nameField = document.getElementById('name');
+const emailField = document.getElementById('email');
+const ageField = document.getElementById('age');
+const genderField = document.getElementById('gender');
+const membershipField = document.getElementById('membership');
+const goalsField = document.getElementById('goals');
+const msg = document.getElementById('msg');
+const savedDiv = document.getElementById('saved');
+
+// Error fields
+const nameErr = document.getElementById('nameErr');
+const emailErr = document.getElementById('emailErr');
+const ageErr = document.getElementById('ageErr');
+
+// Validation Functions
+function validateName(){
+  if(nameField.value.trim().length < 3){
+    nameErr.textContent = 'Name must be at least 3 characters';
+    shake(nameField);
+    return false;
+  }
+  nameErr.textContent = '';
+  return true;
+}
+
+function validateEmail(){
+  const pattern = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+  if(!pattern.test(emailField.value)){
+    emailErr.textContent = 'Invalid email format';
+    shake(emailField);
+    return false;
+  }
+  emailErr.textContent = '';
+  return true;
+}
+
+function validateAge(){
+  const age = parseInt(ageField.value, 10);
+  if(isNaN(age) || age < 16 || age > 60){
+    ageErr.textContent = 'Age must be between 16 and 60';
+    shake(ageField);
+    return false;
+  }
+  ageErr.textContent = '';
+  return true;
+}
+
+// Shake effect
+function shake(el){
+  el.classList.add('shake');
+  setTimeout(()=> el.classList.remove('shake'), 300);
+}
+
+// Save to localStorage
+function saveData(){
+  const user = {
+    name: nameField.value.trim(),
+    email: emailField.value.trim(),
+    age: ageField.value.trim(),
+    gender: genderField.value,
+    membership: membershipField.value,
+    goals: goalsField.value.trim()
+  };
+  localStorage.setItem('gymUser', JSON.stringify(user));
+  return user;
+}
+
+// Load saved data (if any) and show below the form
+function loadSaved(){
+  const raw = localStorage.getItem('gymUser');
+  if(!raw) return null;
+  try{
+    const u = JSON.parse(raw);
+    savedDiv.style.display = 'block';
+    savedDiv.innerHTML = `Saved: <strong>${escapeHtml(u.name || '')}</strong> — ${escapeHtml(u.email || '')} — Age: ${escapeHtml(u.age || '')} — Goals: ${escapeHtml(u.goals || '')}`;
+    return u;
+  }catch(e){
+    console.warn('Failed to parse saved user', e);
+    return null;
+  }
+}
+
+// small helper to avoid XSS when showing saved data
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m];});
+}
+
+// Live events
+nameField.addEventListener('blur', validateName);
+emailField.addEventListener('blur', validateEmail);
+ageField.addEventListener('change', validateAge);
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  // use logical AND (&&) not bitwise &
+  if(validateName() && validateEmail() && validateAge()){
+    const savedUser = saveData();
+    msg.textContent = '✅ Form submitted & saved!';
+    loadSaved();
+    // optionally clear the form or keep values - keeping values here
+  } else {
+    msg.textContent = '';
+  }
+});
+
+// On load, display any saved data
+document.addEventListener('DOMContentLoaded', loadSaved);
+</script>
+</body>
+</html>
+
