@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pet Food Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(90deg, #4facfe, #00f2fe);
+      padding: 20px;
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      text-shadow: 1px 1px 5px #000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .controls {
+      margin: 20px;
+    }
+    .controls input, .controls select {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+    }
+    .products {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 25px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      width: 220px;
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #ff80ab;
+    }
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #4facfe;
+      color: white;
+      border: none;
+      padding: 8px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 45%;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: #0066ff;
+      box-shadow: 0 0 10px #80d8ff;
+    }
+    .bill {
+      background: #fff;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      max-width: 600px;
+    }
+    .cart-list {
+      text-align: left;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+    .highlight {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🐾 Pet Food Shop – Cat & Dog Specials</header>
+
+  <!-- Search + Sort Controls -->
+  <div class="controls">
+    <input type="text" id="searchBox" placeholder="🔎 Search products...">
+    <select id="sortSelect">
+      <option value="">Sort by</option>
+      <option value="low">Price: Low → High</option>
+      <option value="high">Price: High → Low</option>
+      <option value="name">Name: A → Z</option>
+    </select>
+  </div>
+
+  <div class="products" id="productList"></div>
+
+  <div class="bill">
+    <h2>🧾 Your Bill</h2>
+    <div id="cartItems" class="cart-list">No items added yet.</div>
+    <h3>Total: ₹<span id="total">0</span></h3>
+    <h3 class="highlight">Final Amount: ₹<span id="final">0</span></h3>
+  </div>
+
+  <script>
+    // Products with local + Unsplash images
+    let products = [
+      { name: "Cat Food Premium", price: 1200, img: "C:\Users\Falguni\Downloads" },
+      { name: "Dog Food Premium", price: 1500, img: "https://source.unsplash.com/400x300/?dog,food" },
+      { name: "Cat Biscuits", price: 800, img: "https://source.unsplash.com/400x300/?cat,treat" },
+      { name: "Dog Treats", price: 950, img: "https://source.unsplash.com/400x300/?dog,treat" },
+      { name: "Cat Milk", price: 500, img: "https://source.unsplash.com/400x300/?cat,milk" },
+      { name: "Dog Milk", price: 600, img: "https://source.unsplash.com/400x300/?dog,milk" },
+      { name: "Cat Toy Mouse", price: 400, img: "https://source.unsplash.com/400x300/?cat,toy" },
+      { name: "Dog Chew Bone", price: 300, img: "https://source.unsplash.com/400x300/?dog,toy" },
+      { name: "Cat Scratching Post", price: 2000, img: "https://source.unsplash.com/400x300/?cat,scratch" },
+      { name: "Dog Bed", price: 2500, img: "https://source.unsplash.com/400x300/?dog,bed" },
+      { name: "Cat Collar", price: 350, img: "https://source.unsplash.com/400x300/?cat,collar" },
+      { name: "Dog Collar", price: 450, img: "https://source.unsplash.com/400x300/?dog,collar" },
+      { name: "Cat Shampoo", price: 700, img: "https://source.unsplash.com/400x300/?cat,shampoo" },
+      { name: "Dog Shampoo", price: 850, img: "https://source.unsplash.com/400x300/?dog,shampoo" },
+      { name: "Cat Blanket", price: 1200, img: "https://source.unsplash.com/400x300/?cat,blanket" },
+      { name: "Dog Blanket", price: 1500, img: "https://source.unsplash.com/400x300/?dog,blanket" },
+      { name: "Cat Litter", price: 900, img: "https://source.unsplash.com/400x300/?cat,litter" },
+      { name: "Dog Harness", price: 1100, img: "https://source.unsplash.com/400x300/?dog,harness" },
+      { name: "Cat Carrier", price: 3000, img: "https://source.unsplash.com/400x300/?cat,carrier" },
+      { name: "Dog Carrier", price: 3500, img: "https://source.unsplash.com/400x300/?dog,carrier" }
+    ];
+
+    // Render products
+    const productDiv = document.getElementById("productList");
+    function renderProducts(list) {
+      productDiv.innerHTML = "";
+      list.forEach(p => {
+        productDiv.innerHTML += `
+          <div class="card">
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>Price: ₹${p.price}</p>
+            <button class="btn" onclick="addToCart('${p.name}', ${p.price})">➕</button>
+            <button class="btn" onclick="removeFromCart('${p.name}', ${p.price})">➖</button>
+          </div>
+        `;
+      });
+    }
+    renderProducts(products);
+
+    // Search filter
+    document.getElementById("searchBox").addEventListener("input", function () {
+      const query = this.value.toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+      renderProducts(filtered);
+    });
+
+    // Sort products
+    document.getElementById("sortSelect").addEventListener("change", function () {
+      let sorted = [...products];
+      if (this.value === "low") {
+        sorted.sort((a,b) => a.price - b.price);
+      } else if (this.value === "high") {
+        sorted.sort((a,b) => b.price - a.price);
+      } else if (this.value === "name") {
+        sorted.sort((a,b) => a.name.localeCompare(b.name));
+      }
+      renderProducts(sorted);
+    });
+
+    // Cart system
+    let cart = {};
+    let total = 0;
+
+    function addToCart(item, price) {
+      if (cart[item]) {
+        cart[item].qty++;
+      } else {
+        cart[item] = { price: price, qty: 1 };
+      }
+      total += price;
+      displayCart();
+    }
+
+    function removeFromCart(item, price) {
+      if (cart[item] && cart[item].qty > 0) {
+        cart[item].qty--;
+        total -= price;
+        if (cart[item].qty === 0) {
+          delete cart[item];
+        }
+      }
+      displayCart();
+    }
+
+    function displayCart() {
+      const cartDiv = document.getElementById("cartItems");
+      if (Object.keys(cart).length === 0) {
+        cartDiv.innerText = "No items added yet.";
+      } else {
+        cartDiv.innerHTML = "";
+        for (let item in cart) {
+          cartDiv.innerHTML += `${item} x ${cart[item].qty} = ₹${cart[item].price * cart[item].qty}<br>`;
+        }
+      }
+      document.getElementById("total").innerText = total;
+      applyDiscount();
+    }
+
+    // Discount system
+    function applyDiscount() {
+      let finalAmount = total;
+      if (total > 2000) {
+        let discount = finalAmount * 0.20;
+        finalAmount -= discount;
+        alert("🎉 Congratulations! You got 20% OFF. Discount: ₹" + discount);
+      }
+      if (finalAmount < 0) finalAmount = 0; 
+      document.getElementById("final").innerText = finalAmount;
+    }
+  </script>
+</body>
+</html>
