@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>String Operations (JavaScript)</title>
+
+<style>
+    body{
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(45deg, #ff66cc, #66ffff, #cc99ff, #99ffcc);
+        background-size: 400% 400%;
+        animation: bgAnimation 8s infinite alternate;
+        text-align: center;
+        padding: 20px;
+    }
+
+    @keyframes bgAnimation {
+        0% {background-position: 0% 50%;}
+        100% {background-position: 100% 50%;}
+    }
+
+    h1{
+        font-size: 40px;
+        color: white;
+        text-shadow: 0 0 10px #ff00ff;
+        animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+        from {text-shadow: 0 0 10px #ff00ff;}
+        to {text-shadow: 0 0 25px #ffff00;}
+    }
+
+    .box{
+        background:white;
+        border-radius:15px;
+        padding:15px;
+        width:65%;
+        margin:auto;
+        margin-bottom:25px;
+        box-shadow:0px 0px 20px #ff99ff;
+        transition:0.3s;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px);}
+        50% { transform: translateY(-10px);}
+        100% { transform: translateY(0px);}
+    }
+
+    .box:hover{
+        transform: scale(1.05);
+        box-shadow:0 0 30px #ff00ff;
+    }
+
+    button{
+        padding:8px 20px;
+        margin-top:10px;
+        border:none;
+        background:#6600ff;
+        color:white;
+        border-radius:6px;
+        cursor:pointer;
+        transition:0.3s;
+    }
+
+    button:hover{
+        background:#5500dd;
+        box-shadow:0 0 20px #ff00ff;
+        transform: scale(1.05);
+    }
+
+    input, textarea{
+        width:90%;
+        padding:10px;
+        border-radius:8px;
+        border:2px solid #cc00ff;
+        outline:none;
+        transition:0.3s;
+    }
+
+    input:focus, textarea:focus{
+        box-shadow:0 0 15px #ff66ff;
+        border-color:#ff00ff;
+    }
+</style>
+
+</head>
+
+<body>
+
+<h1>🎨 Super Cool JavaScript String Operations 🎨</h1>
+
+<div class="box">
+    <h2>✨ Basic String Methods</h2>
+    <script>
+        let text = "Hello JavaScript World";
+        document.write("<b>Original:</b> " + text + "<br>");
+        document.write("<b>Length:</b> " + text.length + "<br>");
+        document.write("<b>Uppercase:</b> " + text.toUpperCase() + "<br>");
+        document.write("<b>Lowercase:</b> " + text.toLowerCase() + "<br>");
+        document.write("<b>Substring:</b> " + text.substring(0,5) + "<br>");
+        document.write("<b>IndexOf('World'):</b> " + text.indexOf('World') + "<br>");
+        document.write("<b>Replace:</b> " + text.replace("World","Universe") + "<br>");
+        document.write("<b>Split:</b> " + text.split(" ") + "<br>");
+
+        // ✅ vowel count added
+        let vowelCount = 0;
+        for(let i=0; i<text.length; i++){
+            if("aeiouAEIOU".indexOf(text[i]) !== -1){
+                vowelCount++;
+            }
+        }
+        document.write("<b>Vowel Count:</b> " + vowelCount + "<br>");
+
+        // ✅ word count added
+        let wordCount = text.split(" ").length;
+        document.write("<b>Word Count:</b> " + wordCount + "<br>");
+    </script>
+</div>
+
+<div class="box">
+    <h2>🔄 Reverse a String</h2>
+    <input id="revInput" type="text" placeholder="Enter text">
+    <button onclick="reverseString()">Reverse</button>
+    <p id="revResult"></p>
+
+    <script>
+        function reverseString(){
+            let str = document.getElementById("revInput").value;
+            let rev = str.split("").reverse().join("");
+            document.getElementById("revResult").innerHTML = "<b>Reversed:</b> " + rev;
+        }
+    </script>
+</div>
+
+<div class="box">
+    <h2>🅰️ Count Vowels in Paragraph</h2>
+    <textarea id="para" rows="5" placeholder="Type or paste a paragraph..."></textarea>
+    <button onclick="countVowels()">Count</button>
+    <p id="vowelResult"></p>
+
+    <script>
+        function countVowels(){
+            let text = document.getElementById("para").value.toLowerCase();
+            let count = 0;
+            let vowels = "aeiou";
+            
+            for(let i=0;i<text.length;i++){
+                if(vowels.indexOf(text[i]) !== -1){
+                    count++;
+                }
+            }
+            document.getElementById("vowelResult").innerHTML =
+                "<b>Total vowels:</b> " + count;
+        }
+    </script>
+</div>
+
+<div class="box">
+    <h2>📝 Word Counter (Cool Feature!)</h2>
+    <textarea id="wordText" rows="4" placeholder="Write something..."></textarea>
+    <button onclick="countWords()">Count Words</button>
+    <p id="wordResult"></p>
+
+    <script>
+        function countWords(){
+            let text = document.getElementById("wordText").value.trim();
+            if(text === ""){
+                document.getElementById("wordResult").innerHTML = "Words: 0";
+                return;
+            }
+            let words = text.split(/\s+/).length;
+            document.getElementById("wordResult").innerHTML = "<b>Words:</b> " + words;
+        }
+    </script>
+</div>
+
+</body>
+</html>
