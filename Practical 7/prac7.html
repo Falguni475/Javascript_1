@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cute To‑Do + Pomodoro</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #ffe9f3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    color: #ff5da2;
+    font-size: 2.4rem;
+  }
+  .container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 330px;
+  }
+  #taskInput {
+    width: 65%;
+    padding: 7px;
+    border-radius: 8px;
+    border: 1px solid #ff9ac3;
+  }
+  button {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #ff5da2;
+    color: white;
+    cursor: pointer;
+  }
+  ul {
+    margin-top: 15px;
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: #ffdef0;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  li.completed {
+    text-decoration: line-through;
+    background: #caffc2;
+  }
+  .celebration {
+    font-size: 1.2rem;
+    margin-top: 8px;
+    color: #33c55f;
+    display: none;
+  }
+  /* Pomodoro */
+  .pomo {
+    margin-top: 20px;
+    text-align: center;
+  }
+  #timer {
+    font-size: 2rem;
+    margin: 10px 0;
+    color: #ff5da2;
+  }
+</style>
+</head>
+<body>
+  <h1>✨ Cute To‑Do List ✨</h1>
+  <div class="container">
+    <input type="text" id="taskInput" placeholder="Type new task..." />
+    <button id="addBtn">Add</button>
+    <ul id="taskList"></ul>
+    <p class="celebration" id="celebrate">Good job! 🎉</p>
+  </div>
+
+  <div class="pomo container" style="margin-top:25px;">
+    <h2>🍅 Pomodoro Timer</h2>
+    <div id="timer">25:00</div>
+    <button id="startPomo">Start</button>
+    <button id="resetPomo">Reset</button>
+  </div>
+
+<script>
+// To‑do
+const taskInput = document.getElementById("taskInput");
+const taskList = document.getElementById("taskList");
+const celebrate = document.getElementById("celebrate");
+
+document.getElementById("addBtn").addEventListener("click", () => {
+  if(taskInput.value.trim()==="") return;
+  const li = document.createElement("li");
+  const span = document.createElement("span");
+  span.textContent = taskInput.value;
+
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.style.background = "#ffa548";
+
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "❌";
+  delBtn.style.background = "#ff4d4d";
+
+  const doneBtn = document.createElement("button");
+  doneBtn.textContent = "✔";
+  doneBtn.style.background = "#39d67c";
+
+  editBtn.onclick = () => {
+    let newText = prompt("Edit task:", span.textContent);
+    if(newText) span.textContent = newText;
+  };
+
+  delBtn.onclick = () => li.remove();
+
+  doneBtn.onclick = () => {
+    li.classList.toggle("completed");
+    celebrate.style.display = "block";
+    setTimeout(()=> celebrate.style.display="none",1500);
+  };
+
+  li.appendChild(span);
+  li.appendChild(editBtn);
+  li.appendChild(doneBtn);
+  li.appendChild(delBtn);
+  taskList.appendChild(li);
+  taskInput.value = "";
+});
+
+// Pomodoro
+let time = 25*60;
+let running = false;
+let interval;
+
+function updateTimer(){
+  const m = Math.floor(time/60);
+  const s = time%60;
+  document.getElementById("timer").textContent = `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+updateTimer();
+
+document.getElementById("startPomo").onclick = ()=>{
+  if(running) return;
+  running = true;
+  interval = setInterval(()=>{
+    time--;
+    updateTimer();
+    if(time<=0){clearInterval(interval); running=false; alert("Pomodoro done! 🎉");}
+  },1000);
+};
+
+document.getElementById("resetPomo").onclick = ()=>{
+  clearInterval(interval);
+  running = false;
+  time = 25*60;
+  updateTimer();
+};
+</script>
+</body>
+</html>
