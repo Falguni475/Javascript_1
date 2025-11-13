@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lana Del Rey — Concert Registration (Simple Demo)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#7c4dff;--pink:#ff6f91;--bg:#fffaf8}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Montserrat,system-ui,Arial;background:var(--bg);color:#111}
+  header{background:#fff;padding:12px 0;border-bottom:1px solid #eee;position:sticky;top:0}
+  .nav{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+  .nav a{margin-left:12px;text-decoration:none;color:#222;font-weight:600}
+  .container{max-width:900px;margin:20px auto;padding:0 12px}
+  h1.title{font-family:'Playfair Display',serif;font-size:28px;margin:6px 0}
+  .hero{display:flex;gap:18px;align-items:center}
+  .hero img{width:260px;border-radius:8px}
+  .card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .cta{background:linear-gradient(90deg,var(--accent),var(--pink));color:#fff;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+  .muted{color:#666}
+  /* pages */
+  section.page{display:none}
+  section.page.active{display:block}
+  /* seats */
+  .seats{display:grid;grid-template-columns:repeat(6,48px);gap:8px;justify-content:center;margin-top:10px}
+  .seat{width:48px;height:36px;border-radius:6px;background:#444;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .seat.free{background:#1b8a5a}
+  .seat.taken{background:#999;cursor:not-allowed}
+  .seat.selected{background:var(--pink)}
+  /* gallery */
+  .gallery{display:flex;gap:8px;margin-top:10px}
+  .gallery img{width:100%;max-width:240px;border-radius:8px}
+  footer{max-width:900px;margin:30px auto;padding:12px;color:#666;text-align:center}
+  @media(max-width:800px){.hero{flex-direction:column}.hero img{width:100%}}
+</style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div style="display:flex;align-items:center;gap:12px"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Lana_Del_Rey.jpg" alt="logo" style="height:40px;border-radius:6px"><strong>Lana Del Rey</strong></div>
+      <nav>
+        <a href="#" data-nav="home">Home</a>
+        <a href="#" data-nav="tickets">Tickets</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HOME PAGE -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <div style="flex:1">
+          <h1 class="title">Lana Del Rey — Live in Mumbai</h1>
+          <p class="muted">Saturday, 14 March 2026 • Mahalaxmi Event Grounds • Doors 6:00 PM</p>
+          <p style="margin-top:12px">An intimate cinematic evening. This is a demo registration app — no real payment is taken.</p>
+          <div style="margin-top:12px"><button class="cta" id="goTickets">Get Tickets</button></div>
+        </div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Lana_Del_Rey_2017.jpg" alt="Lana photo">
+      </div>
+
+      <div style="margin-top:18px" class="card">
+        <h3 style="margin:0">Gallery</h3>
+        <div class="gallery" id="homeGallery">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Lana_Del_Rey.jpg" alt="Lana portrait">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Lana_Del_Rey_2017.jpg" alt="Lana live">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Lana_Del_Rey_live.jpg" alt="Lana performing">
+        </div>
+      </div>
+    </section>
+
+    <!-- TICKETS PAGE -->
+    <section id="tickets" class="page">
+      <div class="card">
+        <h2 style="margin:0">Register / Choose Seat</h2>
+        <p class="muted" style="margin-top:8px">Fill name, email and pick one available seat. Simple demo — mock ticket will be shown.</p>
+
+        <form id="regForm" style="margin-top:12px">
+          <label for="name">Full name</label>
+          <input id="name" placeholder="Your full name" required>
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" required>
+
+          <label style="margin-top:10px">Pick a seat</label>
+          <div class="seats" id="seatsGrid" aria-label="seat map"></div>
+          <div style="margin-top:8px">Seats left: <span id="seatsLeft">...</span></div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button type="button" class="cta" id="reserveBtn">Reserve & Show Ticket</button>
+            <button type="button" id="backHome" style="padding:10px 14px">Back</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="ticketCard" class="card" style="margin-top:12px;display:none"></div>
+    </section>
+  </main>
+
+  <footer>© Demo • Lana Del Rey — Creative Registration (static demo)</footer>
+
+<script>
+// Simple, defensive, bug-free implementation
+document.addEventListener('DOMContentLoaded', function(){
+  // Navigation
+  function showPage(id){ document.querySelectorAll('section.page').forEach(s=>s.classList.toggle('active', s.id===id)); location.hash = id; }
+  document.querySelectorAll('[data-nav]').forEach(a=>a.addEventListener('click', function(e){ e.preventDefault(); showPage(this.dataset.nav); }));
+  document.getElementById('goTickets').addEventListener('click', ()=> showPage('tickets'));
+  document.getElementById('backHome').addEventListener('click', ()=> showPage('home'));
+  if(location.hash){ const h = location.hash.replace('#',''); if(document.getElementById(h)) showPage(h); }
+
+  // Seats: generate fixed seats and random taken seats
+  const seatsGrid = document.getElementById('seatsGrid'); const seatsLeft = document.getElementById('seatsLeft'); const ticketCard = document.getElementById('ticketCard');
+  const TOTAL = 30; const TAKEN = 6; let seats = [];
+  function build(){ seatsGrid.innerHTML=''; seats = []; const taken = new Set(); while(taken.size < TAKEN) taken.add(Math.floor(Math.random()*TOTAL));
+    for(let i=0;i<TOTAL;i++){ const d = document.createElement('div'); d.className = 'seat'; d.textContent = i+1; if(taken.has(i)){ d.classList.add('taken'); d.setAttribute('aria-disabled','true'); } else { d.classList.add('free'); d.tabIndex = 0; d.addEventListener('click', ()=>select(i)); d.addEventListener('keyup', (e)=>{ if(e.key==='Enter') select(i); }); }
+      seatsGrid.appendChild(d); seats.push({taken:taken.has(i),el:d}); }
+    updateLeft();
+  }
+  function select(index){ if(!seats[index] || seats[index].taken) return; seats.forEach(s=>s.el.classList.remove('selected')); seats[index].el.classList.add('selected'); }
+  function updateLeft(){ const left = seats.filter(s=>!s.taken && !s.el.classList.contains('selected')).length; seatsLeft.textContent = left; }
+  build();
+
+  // Reserve / show ticket (mock)
+  document.getElementById('reserveBtn').addEventListener('click', function(){ const name = document.getElementById('name').value.trim(); const email = document.getElementById('email').value.trim(); if(!name || !email){ alert('Please enter name and email'); return; }
+    const sel = seats.findIndex(s=>s.el.classList.contains('selected'));
+    if(sel === -1){ alert('Please select a seat'); return; }
+    const order = 'LDR' + Math.floor(10000 + Math.random()*89999);
+    const ticket = {order,name,email,seat:sel+1};
+    showTicket(ticket);
+  });
+
+  function showTicket(t){ ticketCard.style.display = 'block'; ticketCard.innerHTML = `<h3>Ticket</h3><p><strong>Order:</strong> ${t.order}</p><p><strong>Name:</strong> ${t.name}</p><p><strong>Email:</strong> ${t.email}</p><p><strong>Seat:</strong> ${t.seat}</p><p style="margin-top:8px"><button class='cta' onclick='window.print()'>Print Ticket</button></p>`; }
+
+  // Lightbox for images (simple)
+  function attachLightbox(id){ const root = document.getElementById(id); if(!root) return; root.querySelectorAll('img').forEach(img=>{ img.style.cursor='zoom-in'; img.addEventListener('click', ()=>{ const overlay = document.createElement('div'); overlay.style.position='fixed'; overlay.style.left=0; overlay.style.top=0; overlay.style.width='100%'; overlay.style.height='100%'; overlay.style.background='rgba(0,0,0,0.85)'; overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center'; overlay.style.zIndex=9999; const im = document.createElement('img'); im.src = img.src; im.style.maxWidth='90%'; im.style.maxHeight='90%'; im.style.borderRadius='8px'; overlay.appendChild(im); overlay.addEventListener('click', ()=>document.body.removeChild(overlay)); document.body.appendChild(overlay); }); }); }
+  attachLightbox('homeGallery');
+});
+</script>
+</body>
+</html>
