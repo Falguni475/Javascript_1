@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grading System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 420px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Student Grading System</h2>
+    <form id="marksForm">
+      <label>DBMS (Database Management System):</label>
+      <input type="number" id="dbms" required>
+
+      <label>CN (Computer Networks):</label>
+      <input type="number" id="cn" required>
+
+      <label>DS (Data Structures):</label>
+      <input type="number" id="ds" required>
+
+      <label>DAA (Design & Analysis of Algorithms):</label>
+      <input type="number" id="daa" required>
+
+      <label>OS (Operating Systems):</label>
+      <input type="number" id="os" required>
+
+      <label>CC (Compiler Construction):</label>
+      <input type="number" id="cc" required>
+      
+      <button type="button" onclick="calculateGrade()">Calculate Result</button>
+    </form>
+
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <script>
+    function getGrade(percentage) {
+      if (percentage >= 90 && percentage <= 100) return "A+ (Excellent)";
+      else if (percentage >= 80) return "A (Very Good)";
+      else if (percentage >= 70) return "B (Good)";
+      else if (percentage >= 60) return "C (Average)";
+      else if (percentage >= 50) return "D (Pass)";
+      else if (percentage >= 0) return "F (Fail)";
+      else return "Invalid";
+    }
+
+    function calculateGrade() {
+      let subjects = {
+        dbms: "DBMS",
+        cn: "CN",
+        ds: "DS",
+        daa: "DAA",
+        os: "OS",
+        cc: "CC"
+      };
+      
+      let marks = [];
+
+      for (let sub in subjects) {
+        let val = parseInt(document.getElementById(sub).value);
+        if (isNaN(val)) {
+          alert("Please enter marks for " + subjects[sub]);
+          return;
+        }
+        if (val < 0 || val > 100) {
+          alert("Invalid marks for " + subjects[sub] + "! Enter between 0 and 100 only.");
+          return;
+        }
+        marks.push(val);
+      }
+
+      let total = marks.reduce((a, b) => a + b, 0);
+      let percentage = (total / 600) * 100;
+      let grade = getGrade(percentage);
+
+      document.getElementById("resultBox").innerHTML = `
+        <strong>Total Marks:</strong> ${total}/600 <br>
+        <strong>Percentage:</strong> ${percentage.toFixed(2)}% <br>
+        <strong>Grade:</strong> ${grade}
+      `;
+    }
+  </script>
+</body>
+</html>
